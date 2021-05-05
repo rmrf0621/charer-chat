@@ -2,7 +2,7 @@
 	<div class="cp-chat-view" v-if="chat !== null" @click="showBrow = false">
 		<div class="msg" id="msg">
 			<ul>
-				<li v-for="c in chat.msgs">
+				<li v-for="(c,index) in chat.msgs" :key="index">
 					<div v-if="c.isMe" style="min-height: 37px">
 						<div class="me" v-html="c.content"></div>
 						<img class="me-img" src="../../../assets/image/avatr.jpg" width="33" height="33">
@@ -20,13 +20,13 @@
 			<div class="brows" v-if="showBrow" @click.stop='showBrowWin'>
 				<div class="brow">
 					<ul>
-						<li v-for="c in brows[activeBrow].brow" style="padding: 2px 2px" v-html="c"
+						<li v-for="(c,index) in brows[activeBrow].brow" style="padding: 2px 2px" v-html="c"  :key="index"
 						    @click.stop="addBrow(c)"></li>
 					</ul>
 				</div>
 				<div class="select">
 					<ul>
-						<li v-for="(c, index) in brows" @click="activeBrow = index"
+						<li v-for="(c, index) in brows" @click="activeBrow = index"  :key="index"
 						    :style="activeBrow === index ? 'background-color:#fff':''" v-html="c.icon"></li>
 					</ul>
 				</div>
@@ -93,8 +93,16 @@
                 document.onmousedown = null;
                 document.onmousemove = null;
             };
+			 document.addEventListener('keydown',this.call)
         },
         methods: {
+			call(e){
+				if(e.keyCode == 13 && this.$route.name == 'chat'){
+					console.log('-------------------')
+				 	//this.send()
+					 
+				}
+            },
             send() {
                 if (this.$refs.ip.innerHTML.length > 0) {
                     let msg = {
@@ -225,8 +233,26 @@
                         sel.addRange(range);
                     }
                 }
-            }
+            },
+			// handleWatchEnter(e) {
+			// 	var key = window.event ? e.keyCode : e.which;
+			// 	console.log(key);
+			// 	if (key === 13) {
+			// 		// 这里执行相应的行为动作
+			// 		console.log('++++');
+			// 		this.send()
+			// 	}
+            // },
         },
+        // mounted(){
+        //     const that = this;
+        //     document.addEventListener('keydown', that.watchEnter);
+        // },
+		// computed:{
+		// 	enterListeners: function () {
+		// 		console.log('=============================')
+		// 	}
+		// },
         watch: {
             fileList: {
                 deep: true,

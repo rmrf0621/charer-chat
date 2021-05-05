@@ -1,13 +1,13 @@
 <template>
 	<div class="body">
 		<ul class="list">
-			<li v-for="g in groups" @click="selects(g)"
+			<li v-for="(g,index) in groups" @click="selects(g)" :key="index"
 			    :style="(select !== null && g.groupId === select.groupId) ? 'background-color: rgb(201, 198, 198);':''">
 				<group :group="g" :select="select"></group>
 			</li>
 		</ul>
 		<div class="content">
-			<chat-view :chat="select" @send="send"></chat-view>
+			<chat-view :chat="select" @send="send" @keyup.enter="demo"></chat-view>
 		</div>
 	</div>
 </template>
@@ -114,7 +114,21 @@
                 }]
             }
 	    },
+        mounted(){
+           
+        },
 	    methods:{
+            // call(e){
+            //     console.log(this.$route)
+			// 	if(e.keyCode == 13 && this.$route.name == 'login'){
+			// 		console.log('-------------------')
+			// 	 	this.send()
+					 
+			// 	}
+            // },
+            demo(){
+                console.log('11111111111111111111111')
+            },
             send(content, groupId) {
                 this.groups.forEach(group => {
                     if (group.groupId === groupId) {

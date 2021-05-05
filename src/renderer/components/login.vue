@@ -1,5 +1,5 @@
 <template>
-	<div class="login">
+	<div class="login" id="loginbtn" >
 		<div class="title">
 			<span>微聊</span>
 			<i class="el-icon-close" @click="exit"></i>
@@ -18,8 +18,8 @@
 					<div style="margin-top: 50px">
 						<el-input v-model="user.account" placeholder="请输入账号"></el-input>
 						<el-input v-model="user.password" placeholder="请输入密码" type="password"></el-input>
-						<el-checkbox v-model="remember">下次直接登录</el-checkbox>
-						<el-button type="primary" class="submit" @click="login">登 录</el-button>
+						<el-checkbox  v-model="remember">下次直接登录</el-checkbox>
+						<el-button  type="primary" class="submit" @click="login">登 录</el-button>
 					</div>
 					<div class="option">
 						<el-button type="text" size="mini">注册账号</el-button>
@@ -54,6 +54,7 @@
             remote.getCurrentWindow().setSize(350, 500, false)
         },
         mounted() {
+			let g = this;
             remote.getCurrentWindow().setSize(350, 500, false)
             this.showLogo = true;
             let that = this;
@@ -64,13 +65,42 @@
                 that.showFont = false
                 that.showForm = true
             }, 2500)
+			// document.onkeydown = function(e){
+			// 	let key = e.keyCode
+			// 	if(key == 13){
+			// 		g.call(e)
+			// 	}
+			// }
+			//this.initKey();
+			document.addEventListener('keydown',this.call)
+			// document.querySelector('#loginbtn').addEventListener("keydown", this.call);
+
         },
         methods: {
+			// initKey() {
+			// 	document.onkeydown = () => {
+			// 		let e = event || window.event || arguments.callee.caller.arguments[0];
+			// 		console.log("document.onkeydown -> e", e);
+			// 		if (e.keyCode === 13) {
+			// 			this.login()
+			// 		}
+			// 	};
+			// },
+
             exit() {
                 //remote.app.quit()
 	            remote.getCurrentWindow().hide()
             },
-            login() {
+			call(e){
+				console.log(this.$route)
+				if(e.keyCode == 13 && this.$route.name == 'login'){
+					console.log('-------------------')
+				 	this.login()
+					document.removeEventListener('keydown',this.call)
+				}
+				 
+			},
+            login(e) {
                 console.log(this.$router)
                 ipcRenderer.send('new-msg','xxx发来一一条消息')
                 this.$router.push('/index')
