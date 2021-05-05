@@ -24,6 +24,7 @@
         beforeCreate() {
             remote.getCurrentWindow().setSize(900, 690)
             remote.getCurrentWindow().setMinimumSize(800, 550)
+			remote.getCurrentWindow().center()
         },
 	    mounted(){
           this.$router.push('/chat')

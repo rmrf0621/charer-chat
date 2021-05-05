@@ -7,7 +7,7 @@
 			</li>
 		</ul>
 		<div class="content">
-			<chat-view :chat="select" @send="send" @keyup.enter="demo"></chat-view>
+			<chat-view :chat="select" @send="send"></chat-view>
 		</div>
 	</div>
 </template>
@@ -115,21 +115,18 @@
             }
 	    },
         mounted(){
-           
+           //document.addEventListener('keydown',this.call)
         },
 	    methods:{
-            // call(e){
-            //     console.log(this.$route)
-			// 	if(e.keyCode == 13 && this.$route.name == 'login'){
-			// 		console.log('-------------------')
-			// 	 	this.send()
+            call(e){
+				if(e.keyCode == 13 && this.$route.name == 'chat'){
+					//console.log('-------------------')
+				 	this.send()
 					 
-			// 	}
-            // },
-            demo(){
-                console.log('11111111111111111111111')
+				}
             },
             send(content, groupId) {
+                //console.log('=========')
                 this.groups.forEach(group => {
                     if (group.groupId === groupId) {
                         group.msgs.push(content)

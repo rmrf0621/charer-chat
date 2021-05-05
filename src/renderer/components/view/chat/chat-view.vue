@@ -1,6 +1,6 @@
 <template>
 	<div class="cp-chat-view" v-if="chat !== null" @click="showBrow = false">
-		<div class="msg" id="msg">
+		<div ref="msgBox" class="msg" id="msg">
 			<ul>
 				<li v-for="(c,index) in chat.msgs" :key="index">
 					<div v-if="c.isMe" style="min-height: 37px">
@@ -93,16 +93,25 @@
                 document.onmousedown = null;
                 document.onmousemove = null;
             };
-			 document.addEventListener('keydown',this.call)
+			document.addEventListener('keydown',this.call)
         },
         methods: {
 			call(e){
 				if(e.keyCode == 13 && this.$route.name == 'chat'){
-					console.log('-------------------')
-				 	//this.send()
-					 
+					//console.log('-------------------')
+				 	this.send()
+					this.scrollToBottom()
+					 //取消回车默认换行
+					e.returnValue = false;
+					return false;
 				}
             },
+			scrollToBottom(){
+				this.$nextTick(() => {
+					var container = this.$el.querySelector("#msg");
+					container.scrollTop = container.scrollHeight;
+				});
+			},
             send() {
                 if (this.$refs.ip.innerHTML.length > 0) {
                     let msg = {
@@ -259,7 +268,7 @@
                 handler(val) {
                     console.log(val)
                 }
-            }
+            },
         }
     }
 </script>
