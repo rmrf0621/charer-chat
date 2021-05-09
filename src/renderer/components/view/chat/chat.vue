@@ -15,12 +15,15 @@
 <script>
     import group from './group'
     import ChatView from "./chat-view";
+    import Login from '@/renderer/commponents/js/proto/login.js'
     
     export default {
         name: "chat",
 	    components:{group, ChatView},
 	    data(){
             return{
+                soscket:null,
+                ws:'ws://127.0.0.1:7003/chat',
                 select:null,
 	            haha:require('../../../assets/image/collect/haha.jpg'),
                 groups: [{
@@ -116,8 +119,71 @@
 	    },
         mounted(){
            //document.addEventListener('keydown',this.call)
+           // 静态地址时
+           // this.$socket.emit('connect', 1)
+        //     var timerOne = window.setInterval(() => {
+        //       if (this.$socket) {
+        //         this.$socket.emit('connect', 1)
+        //         window.clearInterval(timerOne)
+        //         return;
+        //       }
+        //     }, 500)
+            this.init()
+        },
+        // sockets: {
+        //     connect: function () {
+        //         console.log('兄弟,我来了来了,建立连接......')
+        //     },
+        //     customEmit: function (data) {
+        //         console.log('断开连接......')
+        //     },
+        //     //客户端接收后台传输的socket事件
+        //     message(data) {
+        //     console.log("data", data);//接收的消息
+        //     }
+        // },
+        destroyed () {
+            // 销毁监听
+            this.socket.onclose = this.close
         },
 	    methods:{
+            init(){
+                if(typeof(WebSocket) === "undefined"){
+                 alert("您的浏览器不支持socket")
+                }else{
+                    // 实例化socket
+                    this.socket = new WebSocket(this.path)
+                    // 监听socket连接
+                    this.socket.onopen = this.open
+                    // 监听socket错误信息
+                    this.socket.onerror = this.error
+                    // 监听socket消息
+                    this.socket.onmessage = this.getMessage
+
+                    this.wsLogin()
+                }
+            },
+            wsLogin(){
+                let request = new Login();
+                request.setAccount("demo")
+                request.serializeBinary();
+                
+            },
+            open: function () {
+                console.log("socket连接成功")
+            },
+            error: function () {
+                console.log("连接错误")
+            },
+            getMessage: function (msg) {
+                console.log(msg.data)
+            },
+            sends: function () {
+                this.socket.send(params)
+            },
+            close: function () {
+                console.log("socket已经关闭")
+            },
             call(e){
 				if(e.keyCode == 13 && this.$route.name == 'chat'){
 					//console.log('-------------------')
@@ -132,6 +198,7 @@
                         group.msgs.push(content)
                     }
                 })
+                //this.$socket.emit("register","客户端需要帮助了" );
             },
             selects(s) {
                 this.select = s

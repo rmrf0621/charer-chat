@@ -92,7 +92,7 @@
 	            remote.getCurrentWindow().hide()
             },
 			call(e){
-				console.log(this.$route)
+				//console.log(this.$route)
 				if(e.keyCode == 13 && this.$route.name == 'login'){
 					console.log('-------------------')
 				 	this.login()
@@ -101,7 +101,7 @@
 				 
 			},
             login(e) {
-                console.log(this.$router)
+                //console.log(this.$router)
                 ipcRenderer.send('new-msg','xxx发来一一条消息')
                 this.$router.push('/index')
             }

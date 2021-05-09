@@ -161,7 +161,7 @@
             db() {
                 let a = window.getSelection()
                 //a.selectAllChildren(document.getElementById('input'))
-                console.log(a)
+                //console.log(a)
             },
             openFile(row) {
                 exec(row.path, {})
