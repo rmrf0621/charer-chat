@@ -1,4 +1,4 @@
-> 基于 electron-vue 的仿微信客户端
+>electron-vue
 ### 安装/部署
 ``` bash
 # 安装依赖
