@@ -15,7 +15,7 @@
 <script>
     import group from './group'
     import ChatView from "./chat-view";
-    import Login from '@/renderer/commponents/js/proto/login.js'
+    //import ProtoRequest from '@/js/common/request_pb.js'
     
     export default {
         name: "chat",
@@ -23,7 +23,7 @@
 	    data(){
             return{
                 soscket:null,
-                ws:'ws://127.0.0.1:7003/chat',
+                path:'ws://127.0.0.1:7003/chat',
                 select:null,
 	            haha:require('../../../assets/image/collect/haha.jpg'),
                 groups: [{
@@ -118,55 +118,57 @@
             }
 	    },
         mounted(){
-           //document.addEventListener('keydown',this.call)
-           // 静态地址时
-           // this.$socket.emit('connect', 1)
-        //     var timerOne = window.setInterval(() => {
-        //       if (this.$socket) {
-        //         this.$socket.emit('connect', 1)
-        //         window.clearInterval(timerOne)
-        //         return;
-        //       }
-        //     }, 500)
             this.init()
         },
-        // sockets: {
-        //     connect: function () {
-        //         console.log('兄弟,我来了来了,建立连接......')
-        //     },
-        //     customEmit: function (data) {
-        //         console.log('断开连接......')
-        //     },
-        //     //客户端接收后台传输的socket事件
-        //     message(data) {
-        //     console.log("data", data);//接收的消息
-        //     }
-        // },
         destroyed () {
             // 销毁监听
             this.socket.onclose = this.close
         },
 	    methods:{
             init(){
-                if(typeof(WebSocket) === "undefined"){
-                 alert("您的浏览器不支持socket")
-                }else{
-                    // 实例化socket
-                    this.socket = new WebSocket(this.path)
-                    // 监听socket连接
-                    this.socket.onopen = this.open
-                    // 监听socket错误信息
-                    this.socket.onerror = this.error
-                    // 监听socket消息
-                    this.socket.onmessage = this.getMessage
-
-                    this.wsLogin()
+                if(!window.WebSocket){
+                    window.WebSocket = window.MozWebSocket; 
                 }
+                 // 实例化socket
+                this.socket = new WebSocket(this.path)
+                // 监听socket连接
+                this.socket.onopen = this.open
+                // 监听socket错误信息
+                this.socket.onerror = this.error
+                // 监听socket消息
+                this.socket.onmessage = this.getMessage
+                // if("WebSocket" in window){
+                //  alert("您的浏览器不支持socket")
+                // }else{
+                //     // 实例化socket
+                //     this.socket = new WebSocket(this.path)
+                //     // 监听socket连接
+                //     this.socket.onopen = this.open
+                //     // 监听socket错误信息
+                //     this.socket.onerror = this.error
+                //     // 监听socket消息
+                //     this.socket.onmessage = this.getMessage
+
+                //     this.wsLogin()
+                // }
+                
             },
             wsLogin(){
-                let request = new Login();
-                request.setAccount("demo")
-                request.serializeBinary();
+                var login = new this.ProtoRequest.Login();
+                login.setAccount("charlie");
+                login.setClientversion("1");
+                login.setToken("E10ADC3949BA59ABBE56E057F20F883E");
+                login.setDevicemodel("android");
+                login.setId(Math.round(new Date() / 1000));
+                login.setState(1);
+                login.setTimestamp();
+                login.setSystemversion("aaaaaaa");
+
+                var request = new this.ProtoRequest.Request();
+                request.setCategory(this.ProtoRequest.Request.Category.Login)
+                request.setLogin(login);
+
+                this.socket.send(request)
                 
             },
             open: function () {
@@ -186,13 +188,12 @@
             },
             call(e){
 				if(e.keyCode == 13 && this.$route.name == 'chat'){
-					//console.log('-------------------')
 				 	this.send()
 					 
 				}
             },
             send(content, groupId) {
-                //console.log('=========')
+                this.wsLogin()
                 this.groups.forEach(group => {
                     if (group.groupId === groupId) {
                         group.msgs.push(content)

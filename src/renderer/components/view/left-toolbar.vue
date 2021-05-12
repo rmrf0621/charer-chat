@@ -2,7 +2,7 @@
 	<div class="bar" @click.stop="showOptions = false">
 		<img src="../../assets/image/avatr.jpg" width="35" height="35">
 		<div style="margin-top: 20px">
-			<div class="item" v-for="(m,index) in menus">
+			<div class="item" v-for="(m,index) in menus" :key="index">
 				<el-badge :value="m.value" :is-dot="m.isDot" :hidden="m.value === 0">
 					<i :class="m.icon" @click="to(m.path); now = index;"
 					   :style="now === index ? 'color: rgb(7, 193, 96)':''"></i>
