@@ -5,7 +5,7 @@ import App from './App'
 import router from './router'
 import store from './store'
 
-import ProtoRequest from '@/js/common/request_pb.js';
+// import ProtoRequest from '@/js/common/request_pb.js';
 
 import ElementUI from "element-ui";
 import "element-ui/lib/theme-chalk/index.css";
@@ -17,7 +17,7 @@ Vue.config.productionTip = false
 
 
 // 挂载为全局 也可以按需引用 import awesome from './assets/proto/awesome_pb.js'
-Vue.prototype.ProtoRequest = ProtoRequest
+// Vue.prototype.proto = ProtoRequest
 
 // import SocketIO from 'socket.io-client'
 // import VueSocketIO from 'vue-socket.io'

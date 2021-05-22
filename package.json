@@ -15,7 +15,8 @@
     "pack:main": "cross-env NODE_ENV=production webpack --progress --colors --config .electron-vue/webpack.main.config.js",
     "pack:renderer": "cross-env NODE_ENV=production webpack --progress --colors --config .electron-vue/webpack.renderer.config.js",
     "postinstall": "",
-    "rebuild": "electron-rebuild  -f -w sqlite3"
+    "rebuild": "electron-rebuild  -f -w sqlite3",
+    "proto": "pbjs -t json-module -w commonjs -o src/proto/proto.js  src/proto/*.proto"
   },
   "build": {
     "productName": "jwchat",
