@@ -6,7 +6,7 @@
 				<el-button size="mini" type="primary"><i class="el-icon-search"></i>搜索</el-button>
 			</div>
 			<ul>
-				<li v-for="f in select.data">
+				<li v-for="(f ,index) in select.data" :key="index">
 					<div>
 						<img :src="f.img" alt="" width="50px" height="50px">
 						<div class="text">
@@ -24,7 +24,7 @@
 		</div>
 		<div class="subscribe" v-else-if="select.type === 'subscribe'">
 			<ul>
-				<li v-for="s in select.data" @click.stop="showInfo = true; info = s">
+				<li v-for="(s,index) in select.data" :key="index" @click.stop="showInfo = true; info = s">
 					<img :src="s.img" alt="" width="50px" height="50px">
 					<p>{{s.name}}</p>
 					<div class="info" v-if="info === s && showInfo">
@@ -64,7 +64,7 @@
 			</div>
 			<div class="desp">
 				<p>
-					<span>备&nbsp&nbsp&nbsp注</span>
+					<span>备&nbsp;&nbsp;&nbsp;注</span>
 					<span>{{select.name}}</span>
 				</p>
 				<p>
@@ -72,12 +72,12 @@
 					<span>{{select.name}}</span>
 				</p>
 				<p>
-					<span>来&nbsp&nbsp&nbsp源</span>
+					<span>来&nbsp;&nbsp;&nbsp;源</span>
 					<span>通过搜索手机号添加</span>
 				</p>
 			</div>
 			<div class="footer">
-				<el-button type="primary" size="medium">发消息</el-button>
+				<el-button type="primary" size="medium" @click="sendMsg(select)">发消息</el-button>
 			</div>
 		</div>
 	</div>
@@ -93,13 +93,18 @@
 	            showInfo: false,
 	            info: null,
             }
-	    }
+	    },
+		methods:{
+			sendMsg(current){
+				console.log(current)
+				this.$router.push({name:'chat',params:{userid:current.userid}})
+			}
+		}
     }
 </script>
 
 <style scoped lang="less">
 	@import '@/assets/style/theme';
-	
 	.cp-gv{
 		height: 100%;
 		overflow-y: auto;

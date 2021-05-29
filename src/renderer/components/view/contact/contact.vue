@@ -64,15 +64,15 @@
                         title: 'N',
                         type: 'friend',
                         list: [
-                            {img: require('../../../assets/image/group/mv1.jpg'), name: '妮妮', sex:true, },
-                            {img: require('../../../assets/image/group/mv3.jpg'), name: '娜娜', sex:false}
+                            {img: require('../../../assets/image/group/mv1.jpg'), name: '妮妮', sex:true,userid:'nini'},
+                            {img: require('../../../assets/image/group/mv3.jpg'), name: '娜娜', sex:false,userid:'nana'}
                         ]
                     }, {
                         title: 'W',
                         type: 'friend',
                         list: [
-                            {img: require('../../../assets/image/group/mv2.jpg'), name: '婉婉',sex:false},
-                            {img: require('../../../assets/image/group/ayi1.jpg'), name: '王阿姨',sex:false}
+                            {img: require('../../../assets/image/group/mv2.jpg'), name: '婉婉',sex:false,userid:'wanwan'},
+                            {img: require('../../../assets/image/group/ayi1.jpg'), name: '王阿姨',sex:false,userid:'wangayi'}
                         ]
                     },
 

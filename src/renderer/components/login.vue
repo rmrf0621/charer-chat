@@ -44,8 +44,8 @@
                 showForm: false,
                 showFont: false,
                 user: {
-                    account: '',
-                    password: ''
+                    account: 'charlie',
+                    password: '123456'
                 }
             }
         },
@@ -103,6 +103,8 @@
             login(e) {
                 //console.log(this.$router)
                 ipcRenderer.send('new-msg','xxx发来一一条消息')
+				// 存储
+				localStorage.setItem("token", this.user.account+'-1234567890');
                 this.$router.push('/index')
             }
         }

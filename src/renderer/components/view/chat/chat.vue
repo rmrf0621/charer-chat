@@ -15,8 +15,6 @@
 <script>
     import group from './group'
     import ChatView from "./chat-view";
-    //import ProtoRequest from '@/js/common/request_pb.js'
-    // import ProtoRequest from '@/proto/request_pb.js'
     import protobuf from 'protobufjs'
     import protoRoot from '@src/proto/proto.js'
     
@@ -60,7 +58,6 @@
                 }, {
                     img: require('../../../assets/image/group/mv1.jpg'),
                     name: '小芳',
-                    type: 'user',
                     msgs: [{
                         isMe: false,
                         content: '天王盖地虎',
@@ -70,6 +67,8 @@
                         content: '宝塔镇河妖',
                         time: new Date().getTime()
                     }],
+                    type: 'user',
+                    userid:'xiaofang',
                     groupId: 4,
                     unRead: 5
                 }, {
@@ -81,6 +80,7 @@
                         time: new Date().getTime()
                     }],
                     type: 'user',
+                    userid:'wangwang',
                     groupId: 5,
                     unRead: 3
                 }, {
@@ -95,8 +95,9 @@
                         content: '<img src="https://s1.ax1x.com/2020/08/14/dC2uw9.jpg"/><p>孩子肯定不是我的</p>',
                         time: new Date().getTime()
                     }],
-                    groupId: 6,
                     type: 'user',
+                    userid:'nana',
+                    groupId: 6,
                     unRead: 3
                 }, {
                     img: require('../../../assets/image/group/ayi1.jpg'),
@@ -114,14 +115,17 @@
                         content: '阿姨我不想努力了😭',
                         time: new Date().getTime()
                     }],
-                    groupId: 7,
                     type: 'user',
+                    groupId: 7,
+                    userid:'wangayi',
                     unRead: 2
                 }]
             }
-	    },
+	    }, 
         mounted(){
             this.init()
+            this.choose()
+            
         },
         destroyed () {
             // 销毁监听
@@ -142,49 +146,32 @@
                 this.socket.onclose = ()=>{console.log("socket连接已关闭!")}
                 // 监听socket消息
                 this.socket.onmessage = this.getMessage
-                // if("WebSocket" in window){
-                //  alert("您的浏览器不支持socket")
-                // }else{
-                //     // 实例化socket
-                //     this.socket = new WebSocket(this.path)
-                //     // 监听socket连接
-                //     this.socket.onopen = this.open
-                //     // 监听socket错误信息
-                //     this.socket.onerror = this.error
-                //     // 监听socket消息
-                //     this.socket.onmessage = this.getMessage
+                // 建立服务器跟后台的连接,用户登录
+                //this.wsLogin()
+                setTimeout(() => {
+                    this.wsLogin()
+                }, 1000);
+            },
+            choose(){
+                const userid = this.$route.params.userid
 
-                //     this.wsLogin()
-                // }
-                
+                this.groups.map((e)=>{
+                    if(e.userid == userid){
+                       this.selects(e)
+                    }
+                })
+
+                console.log(userid)
             },
             wsLogin(){
-                //     var login = new this.proto.Login({
-                //     'account':'charlie',
-                //     'clientVersion':'1',
-                //     'token':'E10ADC3949BA59ABBE56E057F20F883E',
-                //     'deviceModel':'android',
-                //     'id':Math.round(new Date() / 1000),
-                //     'state':1,
-                //     'timestamp':Math.round(new Date() / 1000),
-                //     'systemVersion':'aaaaaaa'
-                // });
-                // var request = new this.proto.Request({'category':this.proto.Request.Category.LOGIN,'login':login});
-                // {'category':this.proto.Request.Category.LOGIN,'login':login}
-                //request.setCategory(this.proto.Request.Category.LOGIN)
-                //request.setLogin(login);
-                //console.log(this.proto.Request.Category)
-                //console.log(this.proto.Request.deserializeBinary(request.serializeBinary()))
-                //this.socket.send('阿斯顿发送到发的是')
-                //this.socket.send(request.serializeBinary())
-                //this.socket.send(request.serializeBinary())
-
-                //console.log(protoRoot.lookup('Request'))
+                console.log('-----------------------------------------------------------------------')
+                console.log(this.socket.readyState)
+                console.log('-----------------------------------------------------------------------')
                 const request = protoRoot.lookup('Request').create()
                 const login = protoRoot.lookup('Login').create()
                 login.account='charlie'
                 login.clientVersion='1'
-                login.token='E10ADC3949BA59ABBE56E057F20F883E'
+                login.token='eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2MjMxMzg1MDQsInVzZXJpZCI6MTAwMCwiaWF0IjoxNjIyMjc0NTA0LCJ1c2VybmFtZSI6ImNoYXJsaWUifQ.cMK3S3fvSfNa9hKHDeYub5mrb1BPpmKpsK7RTuiazoU'
                 login.deviceModel='android'
                 login.id=Math.round(new Date() / 1000)
                 login.state=1
@@ -192,34 +179,9 @@
                 login.systemVersion='aaaaaaa'
                 request.login = login
                 request.category = protoRoot.Request.Category.Login
-                //console.log(request)
-                //console.log(protoRoot.lookup('Request').encode(request))
-
                 this.socket.send(protoRoot.lookup('Request').encode(request).finish())
 
-                // const Request = protoRoot.lookup('com.sharer.server.core.proto.RequestProto').Request.create()
-                // const loginRequest = protoRoot.lookup('com.sharer.server.core.proto.RequestProto').login.create()
-                // loginRequest.account='charlie'
-                // loginRequest.clientVersion='1'
-                // loginRequest.token='E10ADC3949BA59ABBE56E057F20F883E'
-                // loginRequest.deviceModel='android'
-                // loginRequest.id=Math.round(new Date() / 1000)
-                // loginRequest.state=1
-                // loginRequest.timestamp=Math.round(new Date() / 1000)
-                // loginRequest.systemVersion='aaaaaaa'
-                // Request.login = loginRequest;
-                // loginEncoder = protoRoot.lookup('com.sharer.server.core.proto.RequestProto').login.encode(loginRequest).finish()
-                // console.log(loginEncoder)
-                // requestBuffer = protoRoot.lookup('com.sharer.server.core.proto.RequestProto').Request.encode(Request).finish()
-                // console.log(requestBuffer)
-
             },
-            // open: function () {
-            //     console.log("socket连接成功")
-            // },
-            // error: function () { 
-            //     console.log("连接错误")
-            // },
             getMessage: function (response) {
                 //console.log(protoRoot.lookup('Request').decode(msg.data))
                 const rawResponse = response.data
@@ -234,12 +196,6 @@
 
                 console.log(decodedResponse)
             },
-            // sends: function () {
-            //     this.socket.send(params)
-            // },
-            // close: function () {
-            //     console.log("socket已经关闭")
-            // },
             isArrayBuffer (obj) {
                 return Object.prototype.toString.call(obj) === '[object ArrayBuffer]'
             },
@@ -249,13 +205,50 @@
 				}
             },
             send(content, groupId) {
-                this.wsLogin()
+                this.dataGroup(content)
                 this.groups.forEach(group => {
                     if (group.groupId === groupId) {
                         group.msgs.push(content)
                     }
                 })
                 //this.$socket.emit("register","客户端需要帮助了" );
+            },
+            dataGroup(data){
+               
+                console.log(data)
+                const request = protoRoot.lookup('Request').create()
+                const message = protoRoot.lookup('Message').create()
+                message.id = 10001
+                message.content = data.content;
+                message.msgType = protoRoot.MsgType.TEXT
+                message.from = "charlie"
+                message.to = "root"
+                message.state = 1
+                message.isread = 1
+
+                request.message = message
+                request.category = protoRoot.Request.Category.Message
+                console.log(request)
+                this.socket.send(protoRoot.lookup('Request').encode(request).finish())
+
+                // const request = protoRoot.lookup('Request').create()
+                // const message = protoRoot.lookup('Message').create()
+                // message.id = 10001
+                // message.content = content;
+                // message.msgType = protoRoot.MsgType.TEXT
+                // message.from = "charlie"
+                // message.to = "root"
+                // message.state = 1
+                // message.isread = 1
+                // message.time = Math.round(new Date() / 1000)
+
+                // request.message = message
+                // request.category = protoRoot.Request.Category.Login
+
+                // //debugger
+                // const resq = protoRoot.lookup('Request').encode(request).finish()
+                // console.log(resq)
+                //this.socket.send(resq)
             },
             selects(s) {
                 this.select = s

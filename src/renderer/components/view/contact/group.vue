@@ -1,9 +1,9 @@
 <template>
 	<div class="list">
-		<div v-for="n in contacts">
+		<div v-for="(n,index) in contacts" :key="index">
 			<p>{{n.title}}</p>
 			<ul>
-				<li v-for="l in n.list" @click="selects(l, n.type)"
+				<li v-for="(l,index) in n.list" :key="index" @click="selects(l, n.type)"
 				    :style="l === select ? 'background-color:rgb(201, 198, 198)' : ''">
 					<img :src="l.img" width="35" height="34" alt="">
 					<span>{{l.name}}</span>
@@ -45,7 +45,6 @@
 		padding: 0;
 		margin: 0 0;
 		background-color: @groupBgc;
-		
 		p {
 			margin: 15px 0px 3px 12px;
 			font-size: 12px;
