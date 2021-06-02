@@ -10,6 +10,7 @@
 <script>
     import group from "./group";
     import groupView from './group-view'
+    //import pinyin from '@/pinyin'
 
     export default {
         name: "contact",

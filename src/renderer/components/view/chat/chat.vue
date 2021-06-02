@@ -17,7 +17,7 @@
     import ChatView from "./chat-view";
     import protobuf from 'protobufjs'
     import protoRoot from '@src/proto/proto.js'
-    
+    import { login } from '@/request/api.js'
     export default {
         name: "chat",
 	    components:{group, ChatView},
@@ -123,7 +123,8 @@
             }
 	    }, 
         mounted(){
-            this.init()
+               
+           // this.init()
             this.choose()
             
         },
@@ -133,6 +134,9 @@
         },
 	    methods:{
             init(){
+
+             
+
                 if(!window.WebSocket){
                     window.WebSocket = window.MozWebSocket; 
                 }

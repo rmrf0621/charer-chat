@@ -15,7 +15,6 @@ if (!process.env.IS_WEB) Vue.use(require('vue-electron'))
 Vue.http = Vue.prototype.$http = axios
 Vue.config.productionTip = false
 
-
 // 挂载为全局 也可以按需引用 import awesome from './assets/proto/awesome_pb.js'
 // Vue.prototype.proto = ProtoRequest
 

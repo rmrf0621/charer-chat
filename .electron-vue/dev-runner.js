@@ -64,6 +64,23 @@ function startRenderer () {
       {
         contentBase: path.join(__dirname, '../'),
         quiet: true,
+        proxy: {
+          '/api': {
+            // 请求的目标服务器地址
+            target: 'http://localhost:9000',
+            // 如果是https接口，需要配置这个参数
+            //secure: false,
+            // 设置允许跨域
+            changeOrigin: true,
+            // 重写路径
+            pathRewrite: {
+              '^/api': ''
+            },
+            headers: {
+              referer: ''
+            }
+          }
+        },
         before (app, ctx) {
           app.use(hotMiddleware)
           ctx.middleware.waitUntilValid(() => {
@@ -72,7 +89,6 @@ function startRenderer () {
         }
       }
     )
-
     server.listen(9080)
   })
 }
