@@ -45,7 +45,8 @@
                 showFont: false,
                 user: {
                     username: 'charlie',
-                    password: '123456'
+                    password: '123456',
+					devideType:'web'
                 }
             }
         },
@@ -85,13 +86,11 @@
                 //console.log(this.$router)
                 //ipcRenderer.send('new-msg','xxx发来一一条消息')
 				login(this.user).then(res=>{
-					console.log(res)
 					//debugger;
 					if(res.code == 200){
 						this.$store.commit('SET_TOKEN', res.data); 
 						//this.$store.commit('CLEAR_TOKEN');
 						//this.$store.dispatch("AsyncSetToken",res.data);
-						console.log(this.$store.state.Token)
 						if(this.$store.state.Token){
 							this.$router.push('/index')
 						}
@@ -102,6 +101,12 @@
 							message: error.response.data.message,
                     	})
 					}
+					 friendlist.then(res=>{
+						console.log(res)
+						res.data.forEach(t=>{
+							this.contacts.push(t)
+						})
+               		 })
 				})
             }
         }

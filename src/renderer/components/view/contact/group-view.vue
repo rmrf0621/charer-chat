@@ -8,7 +8,7 @@
 			<ul>
 				<li v-for="(f ,index) in select.data" :key="index">
 					<div>
-						<img :src="f.img" alt="" width="50px" height="50px">
+						<img :src="f.portrait" alt="" width="50px" height="50px">
 						<div class="text">
 							<p style="color:#272626;">{{f.name}}</p>
 							<p>{{f.remark}}</p>
@@ -25,7 +25,7 @@
 		<div class="subscribe" v-else-if="select.type === 'subscribe'">
 			<ul>
 				<li v-for="(s,index) in select.data" :key="index" @click.stop="showInfo = true; info = s">
-					<img :src="s.img" alt="" width="50px" height="50px">
+					<img :src="s.portrait" alt="" width="50px" height="50px">
 					<p>{{s.name}}</p>
 					<div class="info" v-if="info === s && showInfo">
 						<div class="title">
@@ -33,7 +33,7 @@
 								<p>{{s.name}}</p>
 								<p>微信号：{{s.name}}</p>
 							</div>
-							<img :src="s.img" alt="" width="55px" height="55px">
+							<img :src="s.portrait" alt="" width="55px" height="55px">
 						</div>
 						<div class="desp">
 							这是一个无聊的公众号，经常发布一些垃圾信息，快来订阅我吧！
@@ -53,23 +53,23 @@
 		<div class="friend" v-else-if="select.type === 'friend'">
 			<div class="title">
 				<div>
-					<p>{{select.name}}
+					<p>{{select.alias}}
 						<i :class="select.sex?'el-icon-male':'el-icon-female'"
 						   :style="select.sex?'color: rgb(70, 182, 239)':'color: rgb(243, 126, 125)'">
 						</i>
 					</p>
-					<p>{{select.name}}</p>
+					<p>{{select.alias}}</p>
 				</div>
-				<img :src="select.img" alt="" width="55px" height="55px">
+				<img :src="select.portrait" alt="" width="55px" height="55px">
 			</div>
 			<div class="desp">
 				<p>
 					<span>备&nbsp;&nbsp;&nbsp;注</span>
-					<span>{{select.name}}</span>
+					<span>{{select.alias}}</span>
 				</p>
 				<p>
 					<span>微信号</span>
-					<span>{{select.name}}</span>
+					<span>{{select.alias}}</span>
 				</p>
 				<p>
 					<span>来&nbsp;&nbsp;&nbsp;源</span>
@@ -96,15 +96,15 @@
 	    },
 		methods:{
 			sendMsg(current){
-				console.log(current)
-				this.$router.push({name:'chat',params:{userid:current.userid}})
+				// console.log(current)
+				this.$router.push({name:'chat',params:{uid:current.friendUid}})
 			}
 		}
     }
 </script>
 
 <style scoped lang="less">
-	@import '@/assets/style/theme';
+	@import  '@/assets/style/theme';
 	.cp-gv{
 		height: 100%;
 		overflow-y: auto;

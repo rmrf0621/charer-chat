@@ -8,7 +8,7 @@
 						<img class="me-img" src="../../../assets/image/avatr.jpg" width="33" height="33">
 					</div>
 					<div v-else>
-						<img :src="chat.img" width="33" height="33">
+						<img :src="chat.portrait" width="33" height="33">
 						<div class="other" v-html="c.content"></div>
 					</div>
 				</li>

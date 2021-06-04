@@ -5,8 +5,8 @@
 			<ul>
 				<li v-for="(l,index) in n.list" :key="index" @click="selects(l, n.type)"
 				    :style="l === select ? 'background-color:rgb(201, 198, 198)' : ''">
-					<img :src="l.img" width="35" height="34" alt="">
-					<span>{{l.name}}</span>
+					<img :src="l.portrait" width="35" height="34" alt="">
+					<span>{{l.alias}}</span>
 				</li>
 			</ul>
 		</div>
@@ -19,16 +19,19 @@
         props: ['contacts'],
         data() {
             return {
+				img:require('../../../assets/image/group/mv1.jpg'),
                 select: null,
             }
         },
-        mounted() {
-        
+        mounted() { 
         },
 	    methods:{
             selects(s, type){
                 this.select = s
                 this.select.type = type
+				console.log('-----------------------------')
+				console.log(this.select)
+				console.log('-----------------------------')
                 this.$store.commit('setSelectSession', s)
             }
 	    }

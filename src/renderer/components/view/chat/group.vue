@@ -4,7 +4,7 @@
 			<div class="img">
 				<el-badge :is-dot="group.unRead > 0 && group.type === 'group'"
 				          :value="group.unRead" :hidden="0 === group.unRead">
-					<img :src="group.img" width="40" height="40">
+					<img :src="group.portrait" width="40" height="40">
 				</el-badge>
 			</div>
 			<div class="content">

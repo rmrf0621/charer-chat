@@ -17,7 +17,7 @@
     import ChatView from "./chat-view";
     import protobuf from 'protobufjs'
     import protoRoot from '@src/proto/proto.js'
-    import { login } from '@/request/api.js'
+    // import { login } from '@/request/api.js'
     export default {
         name: "chat",
 	    components:{group, ChatView},
@@ -27,8 +27,10 @@
                 path:'ws://127.0.0.1:7003/chat',
                 select:null,
 	            haha:require('../../../assets/image/collect/haha.jpg'),
-                groups: [{
-                    img: require('../../../assets/image/group/img2.png'),
+                groups: [
+                    {
+                    uid:'g1',
+                    portrait: require('../../../assets/image/group/img2.png'),
                     name: '嗦泡大队',
                     type: 'group',
                     msgs: [{
@@ -39,7 +41,8 @@
                     groupId: 1,
                     unRead: 20
                 }, {
-                    img: require('../../../assets/image/group/dyh.png'),
+                    uid:'g2',
+                    portrait: require('../../../assets/image/group/dyh.png'),
                     name: '订阅号',
                     groupId: 2,
                     msgs: [{
@@ -50,14 +53,20 @@
                     type: 'public',
                     unRead: 0
                 }, {
-                    img: require('../../../assets/image/group/img3.png'),
+                    uid:'g3',
+                    portrait: require('../../../assets/image/group/img3.png'),
                     name: '文件传输助手',
                     type: 'file',
                     groupId: 3,
                     unRead: 0
-                }, {
-                    img: require('../../../assets/image/group/mv1.jpg'),
-                    name: '小芳',
+                },
+                 {
+                    portrait: 'https://pic4.zhimg.com/v2-ac785c4cf6be0cf23ac65e15a9f40b65_xl.jpg',
+                    name: '我是大卫啊',
+                    type: 'friend',
+                    uid:'3',
+                    groupId: 4,
+                    unRead: 5,
                     msgs: [{
                         isMe: false,
                         content: '天王盖地虎',
@@ -66,60 +75,58 @@
                         isMe: true,
                         content: '宝塔镇河妖',
                         time: new Date().getTime()
-                    }],
-                    type: 'user',
-                    userid:'xiaofang',
-                    groupId: 4,
-                    unRead: 5
-                }, {
-                    img: require('../../../assets/image/group/mv2.jpg'),
-                    name: '婉婉',
-                    msgs: [{
-                        isMe: false,
-                        content: '你不爱我了吗',
-                        time: new Date().getTime()
-                    }],
-                    type: 'user',
-                    userid:'wangwang',
-                    groupId: 5,
-                    unRead: 3
-                }, {
-                    img: require('../../../assets/image/group/mv3.jpg'),
-                    name: '娜娜',
-                    msgs: [{
-                        isMe: false,
-                        content: '亲爱的，我怀孕了',
-                        time: new Date().getTime()
-                    },{
-                        isMe: true,
-                        content: '<img src="https://s1.ax1x.com/2020/08/14/dC2uw9.jpg"/><p>孩子肯定不是我的</p>',
-                        time: new Date().getTime()
-                    }],
-                    type: 'user',
-                    userid:'nana',
-                    groupId: 6,
-                    unRead: 3
-                }, {
-                    img: require('../../../assets/image/group/ayi1.jpg'),
-                    name: '王阿姨',
-                    msgs: [{
-                        isMe: false,
-                        content: '想通了就给阿姨打电话',
-                        time: new Date().getTime()
-                    }, {
-                        isMe: true,
-                        content: '好',
-                        time: new Date().getTime()
-                    }, {
-                        isMe: true,
-                        content: '阿姨我不想努力了😭',
-                        time: new Date().getTime()
-                    }],
-                    type: 'user',
-                    groupId: 7,
-                    userid:'wangayi',
-                    unRead: 2
-                }]
+                    }]
+                }, 
+                // {
+                //     img: require('../../../assets/image/group/mv2.jpg'),
+                //     name: '婉婉',
+                //     msgs: [{
+                //         isMe: false,
+                //         content: '你不爱我了吗',
+                //         time: new Date().getTime()
+                //     }],
+                //     type: 'user',
+                //     userid:'wangwang',
+                //     groupId: 5,
+                //     unRead: 3
+                // }, {
+                //     img: require('../../../assets/image/group/mv3.jpg'),
+                //     name: '娜娜',
+                //     msgs: [{
+                //         isMe: false,
+                //         content: '亲爱的，我怀孕了',
+                //         time: new Date().getTime()
+                //     },{
+                //         isMe: true,
+                //         content: '<img src="https://s1.ax1x.com/2020/08/14/dC2uw9.jpg"/><p>孩子肯定不是我的</p>',
+                //         time: new Date().getTime()
+                //     }],
+                //     type: 'user',
+                //     userid:'nana',
+                //     groupId: 6,
+                //     unRead: 3
+                // }, {
+                //     img: require('../../../assets/image/group/ayi1.jpg'),
+                //     name: '王阿姨',
+                //     msgs: [{
+                //         isMe: false,
+                //         content: '想通了就给阿姨打电话',
+                //         time: new Date().getTime()
+                //     }, {
+                //         isMe: true,
+                //         content: '好',
+                //         time: new Date().getTime()
+                //     }, {
+                //         isMe: true,
+                //         content: '阿姨我不想努力了😭',
+                //         time: new Date().getTime()
+                //     }],
+                //     type: 'user',
+                //     groupId: 7,
+                //     userid:'wangayi',
+                //     unRead: 2
+                // }
+                ]
             }
 	    }, 
         mounted(){
@@ -134,9 +141,6 @@
         },
 	    methods:{
             init(){
-
-             
-
                 if(!window.WebSocket){
                     window.WebSocket = window.MozWebSocket; 
                 }
@@ -157,15 +161,16 @@
                 }, 1000);
             },
             choose(){
-                const userid = this.$route.params.userid
-
+                const uid = this.$route.params.uid
+                console.log(this.$route)
                 this.groups.map((e)=>{
-                    if(e.userid == userid){
+                    if(e.uid === uid){
+                       console.log('----------存在相等的-----------'+uid)
                        this.selects(e)
                     }
                 })
 
-                console.log(userid)
+                console.log(uid)
             },
             wsLogin(){
                 console.log('-----------------------------------------------------------------------')
