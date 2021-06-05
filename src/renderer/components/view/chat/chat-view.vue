@@ -113,6 +113,8 @@
 				});
 			},
             send() {
+				//debugger
+				console.log(this.$refs.ip)
                 if (this.$refs.ip.innerHTML.length > 0) {
                     let msg = {
                         isMe: true,

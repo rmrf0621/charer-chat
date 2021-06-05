@@ -8,8 +8,10 @@
 				</el-badge>
 			</div>
 			<div class="content">
-				<p>{{group.name}}
+				<p>{{group.alias}}
 				</p>
+				<!-- <span v-if="group.unRead == undefined && group.unRead < 0"></span> -->
+				<!-- <span v-else>[{{group.unRead}}条]</span> -->
 				<span v-show="group.unRead !== undefined && group.unRead > 0">[{{group.unRead}}条]</span>
 				<span style="font-size: 12px">{{subMsg(group.msgs)}}</span>
 			</div>

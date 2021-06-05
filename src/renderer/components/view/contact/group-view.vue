@@ -53,12 +53,12 @@
 		<div class="friend" v-else-if="select.type === 'friend'">
 			<div class="title">
 				<div>
-					<p>{{select.alias}}
+					<p>{{select.nickname}}
 						<i :class="select.sex?'el-icon-male':'el-icon-female'"
 						   :style="select.sex?'color: rgb(70, 182, 239)':'color: rgb(243, 126, 125)'">
 						</i>
 					</p>
-					<p>{{select.alias}}</p>
+					<p>{{select.nickname}}</p>
 				</div>
 				<img :src="select.portrait" alt="" width="55px" height="55px">
 			</div>
@@ -69,7 +69,7 @@
 				</p>
 				<p>
 					<span>微信号</span>
-					<span>{{select.alias}}</span>
+					<span>{{select.mobile}}</span>
 				</p>
 				<p>
 					<span>来&nbsp;&nbsp;&nbsp;源</span>
@@ -263,4 +263,4 @@
 			}
 		}
 	}
-</style>
+</style>                                                                                                                                            
