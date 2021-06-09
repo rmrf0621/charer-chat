@@ -19,16 +19,21 @@
 
 // }
 
+// 当前登录用户的token，account
 const state = {
-    token : null
+    token : null,
+    account:null
 }
 const mutations={
     SET_TOKEN(state,val){
         state.token = val
-        console.log(state.token)
+    },
+    SET_ACCOUNT(state,val){
+      state.account = val
     },
     CLEAR_TOKEN(state){
         state.token = null
+        state.account = null
     }
 }
 

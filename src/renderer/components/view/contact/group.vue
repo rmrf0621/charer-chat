@@ -29,9 +29,6 @@
             selects(s, type){
                 this.select = s
                 this.select.type = type
-				// console.log('-----------------------------')
-				// console.log(this.select)
-				// console.log('-----------------------------')
                 this.$store.commit('setSelectSession', s)
             }
 	    }

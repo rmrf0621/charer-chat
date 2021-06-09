@@ -44,7 +44,7 @@
 		    subStr(msg){
                 if (msg !== undefined && msg !== null){
                     if (msg.length > 10){
-                        return msg.substring(0, 20) + '...'
+                        return msg.substring(0, 15) + '...'
                     }
                     return msg
                 }else{

@@ -98,7 +98,6 @@
         methods: {
 			call(e){
 				if(e.keyCode == 13 && this.$route.name == 'chat'){
-					//console.log('-------------------')
 				 	this.send()
 					this.scrollToBottom()
 					 //取消回车默认换行
@@ -107,14 +106,13 @@
 				}
             },
 			scrollToBottom(){
+				// 消息过多的时候,自动拉到最低部
 				this.$nextTick(() => {
 					var container = this.$el.querySelector("#msg");
 					container.scrollTop = container.scrollHeight;
 				});
 			},
             send() {
-				//debugger
-				console.log(this.$refs.ip)
                 if (this.$refs.ip.innerHTML.length > 0) {
                     let msg = {
                         isMe: true,

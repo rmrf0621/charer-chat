@@ -15,9 +15,9 @@
 <script>
     import group from './group'
     import ChatView from "./chat-view";
-    import protobuf from 'protobufjs'
-    import protoRoot from '@src/proto/proto.js'
-    // import { login } from '@/request/api.js'
+    // import protobuf from 'protobufjs'
+    // import protoRoot from '@src/proto/proto.js'
+    import { onConnect,sender} from '@/request/ProtoSOcket.js'
     export default {
         name: "chat",
 	    components:{group, ChatView},
@@ -84,17 +84,29 @@
         mounted(){
                
            //this.init()
+           onConnect(this.receivedCallback)
            this.choose()
             
         },
         destroyed () {
             // 销毁监听
-            this.socket.onclose = this.close
+            // this.socket.onclose()
         },
 	    methods:{
+            receivedCallback(data){
+               // console.log('-----我是------')
+                //console.log(data)
+                let msg = {
+                    isMe: false,
+                    content: data.message.content,
+                    time: new Date().getTime()
+                }
+                this.showmsg(msg,4)
+                //console.log('-----回调函数------')
+            },
             init(){
                 if(!window.WebSocket){
-                    window.WebSocket = window.MozWebSocket; 
+                    window.WebSocket = window.MozWebSocket;  
                 }
                  // 实例化socket
                 this.socket = new WebSocket(this.path)
@@ -147,8 +159,8 @@
                 const login = protoRoot.lookup('Login').create()
                 login.account='charlie'
                 login.clientVersion='1'
-                login.token='eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2MjMxMzg1MDQsInVzZXJpZCI6MTAwMCwiaWF0IjoxNjIyMjc0NTA0LCJ1c2VybmFtZSI6ImNoYXJsaWUifQ.cMK3S3fvSfNa9hKHDeYub5mrb1BPpmKpsK7RTuiazoU'
-                login.deviceModel='android'
+                login.token= this.$store.state.Token.token
+                login.deviceModel='web'
                 login.id=Math.round(new Date() / 1000)
                 login.state=1
                 login.timestamp=Math.round(new Date() / 1000)
@@ -159,7 +171,6 @@
 
             },
             getMessage: function (response) {
-                //console.log(protoRoot.lookup('Request').decode(msg.data))
                 const rawResponse = response.data
                  // 判断response是否是arrayBuffer
                 if (rawResponse == null || !this.isArrayBuffer(rawResponse)) {
@@ -169,8 +180,15 @@
                 const buf = protobuf.util.newBuffer(rawResponse)
                  // decode响应体
                 const decodedResponse = protoRoot.lookup('Request').decode(buf)
-
-                console.log(decodedResponse)
+                console.log(protoRoot.lookup('Request'))
+                if(decodedResponse.category === 2){
+                    let msg = {
+                        isMe: false,
+                        content: decodedResponse.message.content,
+                        time: new Date().getTime()
+                    }
+                    this.showmsg(msg,4)
+                }
             },
             isArrayBuffer (obj) {
                 return Object.prototype.toString.call(obj) === '[object ArrayBuffer]'
@@ -181,13 +199,27 @@
 				}
             },
             send(content, groupId) {
+                //debugger
                 //this.dataGroup(content)
-                this.groups.forEach(group => {
-                    if (group.groupId === groupId) {
-                        group.msgs.push(content)
+                this.groups.forEach(childs => {
+                    if (childs.groupId === groupId) {
+                        childs.msgs.push(content)
                     }
                 })
                 //this.$socket.emit("register","客户端需要帮助了" );
+            },
+            showmsg(msg, groupId){
+                this.groups.forEach(childs => {
+                    if (childs.groupId === groupId) {
+                        childs.msgs.push(msg)
+                    }
+                })
+                console.log(this.$el)
+                // 消息过多的时候,自动拉到最低部
+				this.$nextTick(() => {
+					var container = this.$el.querySelector("#msg");
+					container.scrollTop = container.scrollHeight;
+				});
             },
             dataGroup(data){
                 const request = protoRoot.lookup('Request').create()
@@ -196,13 +228,13 @@
                 message.content = data.content;
                 message.msgType = protoRoot.MsgType.TEXT
                 message.from = "charlie"
-                message.to = "root"
+                message.to = "nicholas"
                 message.state = 1
                 message.isread = 1
 
                 request.message = message
                 request.category = protoRoot.Request.Category.Message
-                console.log(request)
+                //console.log(request)
                 this.socket.send(protoRoot.lookup('Request').encode(request).finish())
             },
             selects(s) {

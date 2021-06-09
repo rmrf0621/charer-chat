@@ -34,7 +34,7 @@
 
 <script>
     import {remote, app, ipcRenderer} from 'electron'
-	import { login } from '@/request/api.js'
+	import { login,friendlist } from '@/request/api.js'
     export default {
         name: "login",
         data() {
@@ -46,7 +46,7 @@
                 user: {
                     username: 'charlie',
                     password: '123456',
-					devideType:'web'
+					devideType:'WEB'
                 }
             }
         },
@@ -86,9 +86,9 @@
                 //console.log(this.$router)
                 //ipcRenderer.send('new-msg','xxx发来一一条消息')
 				login(this.user).then(res=>{
-					//debugger;
 					if(res.code == 200){
 						this.$store.commit('SET_TOKEN', res.data); 
+						this.$store.commit('SET_ACCOUNT',this.user.username); 
 						//this.$store.commit('CLEAR_TOKEN');
 						//this.$store.dispatch("AsyncSetToken",res.data);
 						if(this.$store.state.Token){
@@ -101,12 +101,11 @@
 							message: error.response.data.message,
                     	})
 					}
-					 friendlist.then(res=>{
-						console.log(res)
-						res.data.forEach(t=>{
-							this.contacts.push(t)
-						})
-               		 })
+					//  friendlist.then(res=>{
+					// 	res.data.forEach(t=>{
+					// 		this.contacts.push(t)
+					// 	})
+               		//  })
 				})
             }
         }
