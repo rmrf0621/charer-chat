@@ -65,11 +65,7 @@
             }
         },
         mounted() {
-            //this.contacts.push(this.fixContacts[0], this.fixContacts[1],this.fixContacts[2])
-            //this.test.forEach(t => this.contacts.push(t))
-            this.init() 
-            //console.log(this.fixContacts)
-           
+            this.init()
         },
         methods: {
             init(){ 

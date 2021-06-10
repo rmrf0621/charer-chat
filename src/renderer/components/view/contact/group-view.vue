@@ -97,7 +97,7 @@
 		methods:{
 			sendMsg(current){
 				// console.log(current)
-				this.$router.push({name:'chat',params:{uid:current.friendUid}})
+				this.$router.push({name:'chat',params:{friendUid:current.friendUid}})
 			}
 		}
     }

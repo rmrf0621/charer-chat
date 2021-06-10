@@ -120,7 +120,7 @@
                         time: new Date().getTime()
                     }
                     this.$refs.ip.innerHTML = ''
-                    this.$emit('send', msg, this.chat.groupId)
+                    this.$emit('send', msg, this.chat.friendUid)
                 }
             },
             getSize(size) {

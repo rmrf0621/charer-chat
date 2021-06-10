@@ -29,7 +29,7 @@
             selects(s, type){
                 this.select = s
                 this.select.type = type
-                this.$store.commit('setSelectSession', s)
+                this.$store.commit('SET_SELECT_SESSION', s)
             }
 	    }
     }

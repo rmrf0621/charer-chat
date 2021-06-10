@@ -66,7 +66,7 @@
             to(path) {
                 if (path !== null && path !== undefined) {
                     console.log('=> /main/' + path)
-                    this.$store.commit('setSelectSession', null)
+                    this.$store.commit('SET_SELECT_SESSION', null)
                     this.$router.push(path)
                 }
             },

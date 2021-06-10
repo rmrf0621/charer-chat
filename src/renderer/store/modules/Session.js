@@ -5,7 +5,7 @@ const state = {
 }
 
 const mutations = {
-   setSelectSession(state, val){
+   SET_SELECT_SESSION(state, val){
        state.selectSession = val
    }
 }

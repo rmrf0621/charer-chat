@@ -24,36 +24,42 @@ let manualStop = false;
 const ProtoSocket = {}
 // 建立socket连接
 const onConnect = ProtoSocket.connect = callback => {
-    socket = new WebSocket(IM_URI);
-    socket.cookieEnabled = false;
-    socket.binaryType = 'arraybuffer';
-    socket.onopen = ProtoSocket.innerOnConnectFinished;
-    socket.onmessage = ProtoSocket.innerOnMessageReceived;
-    socket.onclose = ProtoSocket.innerOnConnectionClosed;
-    // 接手到消息后的回调函数
-    // debugger
-    ProtoSocket.RECEVIED_CALL_BACK = callback;
-    //ProtoSocket.MESSAGE_CAGETORY = protoRoot.lookup('Request').Category;
-
+    if(!socket){
+        socket = new WebSocket(IM_URI);
+        socket.cookieEnabled = false;
+        socket.binaryType = 'arraybuffer';
+        socket.onopen = ProtoSocket.innerOnConnectFinished;
+        socket.onmessage = ProtoSocket.innerOnMessageReceived;
+        socket.onclose = ProtoSocket.innerOnConnectionClosed;
+        // 接手到消息后的回调函数
+        // debugger
+        ProtoSocket.RECEVIED_CALL_BACK = callback;
+        //ProtoSocket.MESSAGE_CAGETORY = protoRoot.lookup('Request').Category;
+    }else {
+        console.log('socket已经连接建立成功!')
+    }
 };
 
 /**
  * 发送消息
  */
 const sender = ProtoSocket.request = (data) =>{
+    console.log('----------当前选中的会话---------------')
+    const talkSession = store.state.Session.selectSession
+    console.log(talkSession.account)
     const request = protoRoot.lookup('Request').create()
     const message = protoRoot.lookup('Message').create()
     message.id = generateUUID()
     message.content = data.content;
     message.msgType = protoRoot.MsgType.TEXT
     message.from = store.state.Token.account
-    message.to = "nicholas" // 设置当前对话的用户
+    message.to = talkSession.account // 设置当前对话的用户
     message.state = 1
     message.isread = 0
     request.message = message
     request.category = protoRoot.Request.Category.Message
     //console.log(request)
-    this.socket.send(protoRoot.lookup('Request').encode(request).finish())
+    socket.send(protoRoot.lookup('Request').encode(request).finish())
 
 }
 

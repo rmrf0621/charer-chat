@@ -10,8 +10,6 @@
 			<div class="content">
 				<p>{{group.alias}}
 				</p>
-				<!-- <span v-if="group.unRead == undefined && group.unRead < 0"></span> -->
-				<!-- <span v-else>[{{group.unRead}}条]</span> -->
 				<span v-show="group.unRead !== undefined && group.unRead > 0">[{{group.unRead}}条]</span>
 				<span style="font-size: 12px">{{subMsg(group.msgs)}}</span>
 			</div>
@@ -44,7 +42,7 @@
 		    subStr(msg){
                 if (msg !== undefined && msg !== null){
                     if (msg.length > 10){
-                        return msg.substring(0, 15) + '...'
+                        return msg.substring(0, 10) + '...'
                     }
                     return msg
                 }else{
