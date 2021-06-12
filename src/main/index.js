@@ -1,4 +1,4 @@
-import {app, BrowserWindow, Menu, Tray, ipcMain} from 'electron'
+import { app, BrowserWindow, Menu, Tray, ipcMain } from 'electron'
 import path from 'path'
 import '../renderer/store'
 
@@ -9,10 +9,11 @@ import '../renderer/store'
 if (process.env.NODE_ENV !== 'development') {
     global.__static = require('path').join(__dirname, '/static').replace(/\\/g, '\\\\')
 }
-let mainWindow, tray = null, trayIcon = null
-const winURL = process.env.NODE_ENV === 'development'
-    ? `http://localhost:9080`
-    : `file://${__dirname}/index.html`
+let mainWindow, tray = null,
+    trayIcon = null
+const winURL = process.env.NODE_ENV === 'development' ?
+    `http://localhost:9080` :
+    `file://${__dirname}/index.html`
 
 function createWindow() {
     /**
@@ -47,17 +48,28 @@ app.on('activate', () => {
     }
 })
 
+
+
 const createTray = () => {
-    trayIcon = path.join(__dirname, './');
-    tray = new Tray(path.join(trayIcon, 'tray.png'));
-    const contextMenu = Menu.buildFromTemplate([
-        {
-            label: '取消闪烁', click: function () {
+    //创建系统通知区菜单
+    if (process.env.NODE_ENV !== 'development') { //生成环境
+        tray = new Tray(path.join(__static, './tray.png'))
+        trayIcon = path.join(__static, './');
+    } else { //研发环境
+        tray = new Tray(path.join(__dirname, './tray.png'))
+        trayIcon = path.join(__dirname, './');
+    }
+    //trayIcon = path.join(__dirname, './');
+    //tray = new Tray(path.join(trayIcon, 'tray.png'));
+    const contextMenu = Menu.buildFromTemplate([{
+            label: '取消闪烁',
+            click: function() {
                 trayInit()
             }
         },
         {
-            label: '退出', click: function () {
+            label: '退出',
+            click: function() {
                 app.quit()
             }
         }
@@ -71,7 +83,8 @@ const createTray = () => {
     trayFlashing()
 }
 
-let show = false, timer = null;
+let show = false,
+    timer = null;
 const trayInit = () => {
     if (null !== timer) {
         clearInterval(timer)
@@ -80,7 +93,7 @@ const trayInit = () => {
     }
 }
 const trayFlashing = () => {
-    timer = setInterval(function () {
+    timer = setInterval(function() {
         if (show) {
             tray.setImage(path.join(trayIcon, 'tray.png'))
         } else {
@@ -91,7 +104,7 @@ const trayFlashing = () => {
 }
 
 ipcMain.on('new-msg', (event, params) => {
-    console.log('收到新消息：',params)
+    console.log('收到新消息：', params)
     trayFlashing()
     return true
 })
@@ -121,9 +134,9 @@ autoUpdater.on('download-progress', progressObj => {
 })
 
 autoUpdater.on('update-downloaded', () => {
-  autoUpdater.quitAndInstall()
+    autoUpdater.quitAndInstall()
 })
 
 app.on('ready', () => {
-  if (process.env.NODE_ENV === 'production') autoUpdater.checkForUpdates()
+    if (process.env.NODE_ENV === 'production') autoUpdater.checkForUpdates()
 })

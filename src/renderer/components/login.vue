@@ -33,8 +33,9 @@
 </template>
 
 <script>
+ 	import log from 'electron-log'
     import {remote, app, ipcRenderer} from 'electron'
-	import { login,friendlist } from '@/request/api.js'
+	import { login ,userconfig} from '@/request/api.js'
     export default {
         name: "login",
         data() {
@@ -67,6 +68,7 @@
                 that.showForm = true
             }, 2500)
 			document.addEventListener('keydown',this.call)
+			log.transports.file.file = "D:/client.log"
 
         },
         methods: {
@@ -75,7 +77,6 @@
 	            remote.getCurrentWindow().hide()
             },
 			call(e){
-				//console.log(this.$route)
 				if(e.keyCode == 13 && this.$route.name == 'login'){
 				 	this.login()
 					document.removeEventListener('keydown',this.call)
@@ -85,13 +86,19 @@
             login(e) {
                 //console.log(this.$router)
                 //ipcRenderer.send('new-msg','xxx发来一一条消息')
+				
 				login(this.user).then(res=>{
-					if(res.code == 200){
+					if(res.code == 200){ 
 						this.$store.commit('SET_TOKEN', res.data); 
-						this.$store.commit('SET_ACCOUNT',this.user.username); 
+						//this.$store.commit('SET_ACCOUNT',this.user.username); 
 						//this.$store.commit('CLEAR_TOKEN');
 						//this.$store.dispatch("AsyncSetToken",res.data);
 						if(this.$store.state.Token){
+							userconfig().then(res=>{
+								if(res.code === 200){
+									this.$store.commit('SET_USER_CONFIG',res.data); 
+								}
+							})
 							this.$router.push('/index')
 						}
 					}else {
@@ -99,13 +106,8 @@
 							showClose: true,
 							duration: 1500,
 							message: error.response.data.message,
-                    	})
+						})
 					}
-					//  friendlist.then(res=>{
-					// 	res.data.forEach(t=>{
-					// 		this.contacts.push(t)
-					// 	})
-               		//  })
 				})
             }
         }

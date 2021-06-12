@@ -1,7 +1,7 @@
 {
-  "name": "jwchat",
+  "name": "sharer-chat",
   "version": "0.0.1",
-  "author": "willianfu <2423542142@qq.com>",
+  "author": "dalao@gmail.com>",
   "description": "An chat tool",
   "license": null,
   "main": "./dist/electron/main.js",
@@ -19,8 +19,8 @@
     "proto": "pbjs -t json-module -w commonjs -o src/proto/proto.js  src/proto/*.proto"
   },
   "build": {
-    "productName": "jwchat",
-    "appId": "com.jiawei.chat",
+    "productName": "sharerchat",
+    "appId": "com.sharer.chat",
     "directories": {
       "output": "build"
     },
@@ -56,7 +56,6 @@
     "electron-updater": "^4.3.1",
     "element-ui": "^2.13.2",
     "google-protobuf": "^3.17.0-rc.1",
-    "pinyin": "^2.10.2",
     "sql.js": "^1.3.0",
     "vue": "^2.5.16",
     "vue-electron": "^1.0.6",
@@ -86,6 +85,7 @@
     "electron-builder": "^20.19.2",
     "electron-debug": "^1.5.0",
     "electron-devtools-installer": "^2.2.4",
+    "electron-log": "^4.3.5",
     "file-loader": "^1.1.11",
     "html-webpack-plugin": "^3.2.0",
     "less": "^3.12.2",
@@ -111,5 +111,9 @@
       "provider": "generic",
       "url": "http://lee.com/app/update"
     }
-  ]
+  ],
+  "optionalDependencies": {
+    "bufferutil": "^4.0.3",
+    "utf-8-validate": "^5.0.5"
+  }
 }

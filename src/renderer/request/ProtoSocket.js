@@ -3,15 +3,15 @@ import protoRoot from '@src/proto/proto.js'
 // vuex的路径根据自己的路径去写
 import store from '@/store/index';
 
-if(!window.WebSocket){
-    window.WebSocket = window.MozWebSocket; 
+if (!window.WebSocket) {
+    window.WebSocket = window.MozWebSocket;
 }
 
 /*
     成功回调函数
 */
 const CLIENT_VERSION = "1.0.0"
-const SYSTEM_VERSION =  getBrowser()
+const SYSTEM_VERSION = getBrowser()
 const CLIENT_TYPE = "WEB"
 const MESSAGE_CAGETORY = protoRoot.lookup('Request').Category
 
@@ -22,9 +22,9 @@ let socket;
 let manualStop = false;
 
 const ProtoSocket = {}
-// 建立socket连接
+    // 建立socket连接
 const onConnect = ProtoSocket.connect = callback => {
-    if(!socket){
+    if (!socket) {
         socket = new WebSocket(IM_URI);
         socket.cookieEnabled = false;
         socket.binaryType = 'arraybuffer';
@@ -35,7 +35,7 @@ const onConnect = ProtoSocket.connect = callback => {
         // debugger
         ProtoSocket.RECEVIED_CALL_BACK = callback;
         //ProtoSocket.MESSAGE_CAGETORY = protoRoot.lookup('Request').Category;
-    }else {
+    } else {
         console.log('socket已经连接建立成功!')
     }
 };
@@ -43,64 +43,76 @@ const onConnect = ProtoSocket.connect = callback => {
 /**
  * 发送消息
  */
-const sender = ProtoSocket.request = (data) =>{
+const sender = ProtoSocket.request = (data) => {
+    //CONNECTING：值为0，表示正在连接。
+    //OPEN：值为1，表示连接成功，可以通信了。
+    //CLOSING：值为2，表示连接正在关闭。
+    //CLOSED：值为3，表示连接已经关闭，或者打开连接失败。
+    if (!socket.readyState === 1) {
+        ProtoSocket.resume()
+        if (socket.readyState === 0) {
+            setTimeout(() => {
+                console.log('等待连接........')
+            }, 1000);
+        }
+    }
     console.log('----------当前选中的会话---------------')
     const talkSession = store.state.Session.selectSession
-    console.log(talkSession.account)
+    const current = store.state.Token.userconfig.userInfoVo
+    console.log(talkSession.friendUid)
     const request = protoRoot.lookup('Request').create()
     const message = protoRoot.lookup('Message').create()
     message.id = generateUUID()
-    message.content = data.content;
+    message.content = data;
     message.msgType = protoRoot.MsgType.TEXT
-    message.from = store.state.Token.account
-    message.to = talkSession.account // 设置当前对话的用户
+    message.from = '' + current.userid
+    message.to = talkSession.friendUid // 设置当前对话的用户
     message.state = 1
     message.isread = 0
     request.message = message
     request.category = protoRoot.Request.Category.Message
-    //console.log(request)
     socket.send(protoRoot.lookup('Request').encode(request).finish())
-
 }
 
 //ProtoSocket.SUCCESS_CALL_BACK
 
 // websocket连接建立后，登录
-ProtoSocket.innerOnConnectFinished = function () {
+ProtoSocket.innerOnConnectFinished = function() {
     //console.log('-----------------websocket连接建立后，登录-----------------------')
-    let account = store.state.Token.token;
-    if (account === '' || account === undefined) {
-      //window.onConnectFinished();
-      console.log('can not find account !')
+    const current = store.state.Token.userconfig.userInfoVo
+    if (current === '' || current === null || current === undefined) {
+        //window.onConnectFinished();
+        console.log('can not find account !')
     } else {
         // 延迟登录请求
-        setTimeout(ProtoSocket.bindAccount(account),1000)
+        setTimeout(ProtoSocket.bindAccount('' + current.userid), 1000)
     }
 };
 
 
 // 设置用户账号相关信息，请求websocket登录
-ProtoSocket.bindAccount = ()=>{
+ProtoSocket.bindAccount = (userid) => {
     //console.log('-----------------登录-----------------------')
     const timestamp = Math.round(new Date() / 1000)
-    // 请求报文
+        // 请求报文
     const request = protoRoot.lookup('Request').create()
-    // 登录建立连接报文
+        // 登录建立连接报文
     const login = protoRoot.lookup('Login').create()
-    login.account= store.state.Token.account
-    login.clientVersion= CLIENT_VERSION
-    login.token= store.state.Token.token
-    login.deviceModel= CLIENT_TYPE
-    login.id= generateUUID()
-    login.state= 1
-    login.timestamp= timestamp
-    login.systemVersion= SYSTEM_VERSION.name+'/'+SYSTEM_VERSION.version
+        //const current = store.state.Token.userconfig.userInfoVo
+    login.id = generateUUID()
+    login.account = userid
+    login.clientVersion = CLIENT_VERSION
+    login.token = store.state.Token.token
+    login.deviceModel = CLIENT_TYPE
+    login.state = 1
+    login.timestamp = timestamp
+    login.systemVersion = SYSTEM_VERSION.name + '/' + SYSTEM_VERSION.version
     request.login = login
     request.category = protoRoot.Request.Category.Login
     socket.send(protoRoot.lookup('Request').encode(request).finish())
 }
 
-ProtoSocket.isArrayBuffer = (obj)=>{
+ProtoSocket.isArrayBuffer = (obj) => {
     return Object.prototype.toString.call(obj) === '[object ArrayBuffer]'
 }
 
@@ -109,7 +121,7 @@ ProtoSocket.isArrayBuffer = (obj)=>{
  * @param {*} e 
  * @returns 
  */
-ProtoSocket.innerOnMessageReceived = function (response) {
+ProtoSocket.innerOnMessageReceived = function(response) {
     //let data = new Uint8Array(e.data);
     //let type = data[0];
     //let body = data.subarray(DATA_HEADER_LENGTH, data.length);
@@ -122,20 +134,20 @@ ProtoSocket.innerOnMessageReceived = function (response) {
     }
     //console.log('---------------接受到消息了------------------')
     const buf = protobuf.util.newBuffer(rawResponse)
-    //console.log(protoRoot.lookup('Request'))
-    //debugger
-    // decode响应体
+        //console.log(protoRoot.lookup('Request'))
+        //debugger
+        // decode响应体
     const decodedResponse = protoRoot.lookup('Request').decode(buf)
     console.log(decodedResponse)
-    if(decodedResponse.category === MESSAGE_CAGETORY.Login){// 登录
-
-    }else if(decodedResponse.category === MESSAGE_CAGETORY.Message){// 正常消息
-        console.log(decodedResponse)
+    if (decodedResponse.category === MESSAGE_CAGETORY.LoginResp) { // 登录
+        console.log('用户成功建立socket!!!!!!')
+    } else if (decodedResponse.category === MESSAGE_CAGETORY.Message) { // 正常消息
+        //console.log(decodedResponse)
         // 回调函数
         ProtoSocket.RECEVIED_CALL_BACK(decodedResponse)
-    }else if (decodedResponse.category === MESSAGE_CAGETORY.HearBeat){// 心跳检测
+    } else if (decodedResponse.category === MESSAGE_CAGETORY.HearBeat) { // 心跳检测
 
-    }else if(decodedResponse.category === MESSAGE_CAGETORY.Notification){
+    } else if (decodedResponse.category === MESSAGE_CAGETORY.Notification) {
 
     }
 
@@ -163,7 +175,7 @@ ProtoSocket.innerOnMessageReceived = function (response) {
     //     reply.data = {};
 
     //     /**
-    
+
     //      * 注意，遍历map这里的参数 value在前key在后
     //      */
     //     message.getDataMap().forEach(function (v, k) {
@@ -175,22 +187,22 @@ ProtoSocket.innerOnMessageReceived = function (response) {
 };
 
 // socket关闭
-ProtoSocket.innerOnConnectionClosed = ()=>{
+ProtoSocket.innerOnConnectionClosed = () => {
     if (!manualStop) {
         let time = Math.floor(Math.random() * (30 - 15 + 1) + 15);
-        setTimeout(function () {
+        setTimeout(function() {
             ProtoSocket.connect();
         }, time);
     }
 }
 
-ProtoSocket.stop = function () {
+ProtoSocket.stop = function() {
     manualStop = true;
     socket.close();
 };
 
 /* socket重连 */
-ProtoSocket.resume = function () {
+ProtoSocket.resume = function() {
     manualStop = false;
     ProtoSocket.connect();
 };
@@ -217,8 +229,8 @@ function onInterceptMessageReceived(message) {
 /**
  * 心跳检测 -- 后续待处理
  */
-ProtoSocket.pong = function () {
-    let pong =  new Uint8Array(PONG_BODY.byteLength + 1);
+ProtoSocket.pong = function() {
+    let pong = new Uint8Array(PONG_BODY.byteLength + 1);
     //pong[0] = PONG;
     //pong.set(PONG_BODY,1);
     socket.send(pong);
@@ -229,26 +241,26 @@ function getBrowser() {
     let explorer = window.navigator.userAgent.toLowerCase();
     if (explorer.indexOf("msie") >= 0) {
         let ver = explorer.match(/msie ([\d.]+)/)[1];
-        return {name: "IE", version: ver};
+        return { name: "IE", version: ver };
     } else if (explorer.indexOf("firefox") >= 0) {
         let ver = explorer.match(/firefox\/([\d.]+)/)[1];
-        return {name: "Firefox", version: ver};
+        return { name: "Firefox", version: ver };
     } else if (explorer.indexOf("chrome") >= 0) {
         let ver = explorer.match(/chrome\/([\d.]+)/)[1];
-        return {name: "Chrome", version: ver};
+        return { name: "Chrome", version: ver };
     } else if (explorer.indexOf("opera") >= 0) {
         let ver = explorer.match(/opera.([\d.]+)/)[1];
-        return {name: "Opera", version: ver};
+        return { name: "Opera", version: ver };
     } else if (explorer.indexOf("Safari") >= 0) {
         let ver = explorer.match(/version\/([\d.]+)/)[1];
-        return {name: "Safari", version: ver};
+        return { name: "Safari", version: ver };
     }
-    return {name: "Other", version: "1.0.0"};
+    return { name: "Other", version: "1.0.0" };
 }
 
 function generateUUID() {
     let d = new Date().getTime();
-    let uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+    let uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
         let r = (d + Math.random() * 16) % 16 | 0;
         d = Math.floor(d / 16);
         return (c == 'x' ? r : (r & 0x3 | 0x8)).toString(16);
@@ -257,8 +269,8 @@ function generateUUID() {
 }
 
 export {
-  onConnect,
-  sender
-  //onbindAccount,
-  //SUCCESS_CALL_BACK
+    onConnect,
+    sender
+    //onbindAccount,
+    //SUCCESS_CALL_BACK
 }

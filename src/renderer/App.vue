@@ -9,7 +9,7 @@
   //import {select, ready, save, update} from "./sql";
   //let n = new Notification('您有新消息',{title:'您有新消息',body:'xxx你好',silent:true})
   export default {
-    name: 'jwchat',
+    name: 'sharer-chat',
     mounted() {
     }
   }

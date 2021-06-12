@@ -5,7 +5,7 @@
 				<li v-for="(c,index) in chat.msgs" :key="index">
 					<div v-if="c.isMe" style="min-height: 37px">
 						<div class="me" v-html="c.content"></div>
-						<img class="me-img" src="../../../assets/image/avatr.jpg" width="33" height="33">
+						<img class="me-img" :src="myportrait" width="33" height="33">
 					</div>
 					<div v-else>
 						<img :src="chat.portrait" width="33" height="33">
@@ -65,12 +65,12 @@
 
 <script>
     import {exec} from 'child_process'
-
     export default {
         name: "chat-view",
         props: ['chat'],
         data() {
             return {
+				myportrait:null,
                 sendHeight: 50,
                 input: '',
                 fileList: [],
@@ -89,17 +89,27 @@
         },
         mounted() {
             this.setPasteImg()
+			this.myportrait = this.$store.state.Token.userconfig.userInfoVo.portrait
             document.onmouseup = function () {
                 document.onmousedown = null;
                 document.onmousemove = null;
             };
 			document.addEventListener('keydown',this.call)
         },
+		watch:{
+			 chat:{//深度监听，可监听到对象、数组的变化
+				handler(val, oldVal){
+					console.log("b.c: "+val.c, oldVal.c);
+					this.scrollToBottom()
+				},
+				deep:true //true 深度监听
+			}
+		},
         methods: {
 			call(e){
 				if(e.keyCode == 13 && this.$route.name == 'chat'){
 				 	this.send()
-					this.scrollToBottom()
+					console.log(this.$store.state.Token.userconfig.userInfoVo.portrait)
 					 //取消回车默认换行
 					e.returnValue = false;
 					return false;
@@ -109,11 +119,14 @@
 				// 消息过多的时候,自动拉到最低部
 				this.$nextTick(() => {
 					var container = this.$el.querySelector("#msg");
-					container.scrollTop = container.scrollHeight;
+					if(container && container.scrollHeight){
+                        container.scrollTop = container.scrollHeight;
+                    }
+					//container.scrollTop = container.scrollHeight;
 				});
 			},
             send() {
-                if (this.$refs.ip.innerHTML.length > 0) {
+                if (this.$refs.ip && this.$refs.ip.innerHTML && this.$refs.ip.innerHTML.length > 0) {
                     let msg = {
                         isMe: true,
                         content: this.$refs.ip.innerHTML,
@@ -121,6 +134,7 @@
                     }
                     this.$refs.ip.innerHTML = ''
                     this.$emit('send', msg, this.chat.friendUid)
+					this.scrollToBottom()
                 }
             },
             getSize(size) {

@@ -15,6 +15,7 @@
 <script>
     import group from './group'
     import ChatView from "./chat-view";
+    import { friendlist } from '@/request/api.js'
     import { onConnect,sender} from '@/request/ProtoSocket.js'
     export default {
         name: "chat",
@@ -22,7 +23,7 @@
 	    data(){
             return{
                 select:null,
-	            haha:require('../../../assets/image/collect/haha.jpg'),
+	            //haha:require('../../../assets/image/collect/haha.jpg'),
                 groups: [
                 //     {
                 //     uid:'g1',
@@ -56,25 +57,25 @@
                 //     groupId: 3,
                 //     unRead: 0
                 // },
-                 {
-                    portrait: 'https://pic2.zhimg.com/v2-5394c89fb122ef5732b4465e3fed7df0_xl.jpg',
-                    alias:'这个是尼古拉斯',
-                    nickname: '尼古拉斯',
-                    type: 'friend',
-                    account:'nicholas',
-                    friendUid:"2",
-                    //groupId: 4,
-                    unRead: 5,
-                    msgs: [{
-                        isMe: false,
-                        content: '天王盖地虎',
-                        time: new Date().getTime()
-                    }, {
-                        isMe: true,
-                        content: '宝塔镇河妖',
-                        time: new Date().getTime()
-                    }]
-                }, 
+                //  {
+                //     portrait: 'https://pic2.zhimg.com/v2-5394c89fb122ef5732b4465e3fed7df0_xl.jpg',
+                //     alias:'这个是尼古拉斯',
+                //     nickname: '尼古拉斯',
+                //     type: 'friend',
+                //     account:'nicholas',
+                //     friendUid:"2",
+                //     //groupId: 4,
+                //     unRead: 5,
+                //     msgs: [{
+                //         isMe: false,
+                //         content: '天王盖地虎',
+                //         time: new Date().getTime()
+                //     }, {
+                //         isMe: true,
+                //         content: '宝塔镇河妖',
+                //         time: new Date().getTime()
+                //     }]
+                // }, 
                 ]
             }
 	    }, 
@@ -99,6 +100,8 @@
                 this.showmsg(msg,data.message.from)
             },
             choose(){
+                // 自己向其他人发送消息,如果如果对话session有相关消息记录，
+                // 就直接选中，不然就新建session
                 const friendUid = this.$route.params.friendUid
                 if(friendUid){
                     //debugger
@@ -146,18 +149,44 @@
                 //this.$socket.emit("register","客户端需要帮助了" );
             },
             showmsg(msg, from){
-                this.groups.forEach(childs => {
-                    if (childs.account === from) {
-                        childs.msgs.push(msg)
+                // 如果当这个会话早就有了，就直接添加消息
+                let exist = false;
+                this.groups.map(e => {
+                    if (e.friendUid === from) {
+                        exist = true
+                        e.msgs.push(msg)
+                        this.selects(e)
                     }
                 })
+                // 当前会话列表没有
+                if(!exist){
+                    friendlist({userid:from}).then(res=>{
+                        let cu = res.data
+                        // 会话列表对象拼接
+                        let talk = {
+                            uid:cu.uid,
+                            alias:cu.alias,
+                            portrait:cu.portrait,
+                            name :cu.name,
+                            type:cu.type,
+                            groupId: 66,
+                            friendUid: cu.friendUid,
+                            unRead:0,
+                            msgs:[]
+                        }
+                        this.groups.unshift(talk)
+                        // 会话选中
+                        this.selects(talk);
+                        })
+
+                }
                 // 消息过多的时候,自动拉到最低部
-				this.$nextTick(() => {
-					var container = this.$el.querySelector("#msg");
-                    if(container && container.scrollHeight){
-                        container.scrollTop = container.scrollHeight;
-                    }
-				});
+				// this.$nextTick(() => {
+				// 	var container = this.$el.querySelector("#msg");
+                //     if(container && container.scrollHeight){
+                //         container.scrollTop = container.scrollHeight;
+                //     }
+				// });
             },
             // dataGroup(data){
             //     const request = protoRoot.lookup('Request').create()

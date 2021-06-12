@@ -1,6 +1,6 @@
 <template>
 	<div class="bar" @click.stop="showOptions = false">
-		<img src="../../assets/image/avatr.jpg" width="35" height="35">
+		<img :src="this.$store.state.Token.userconfig.userInfoVo.portrait" width="35" height="35">
 		<div style="margin-top: 20px">
 			<div class="item" v-for="(m,index) in menus" :key="index">
 				<el-badge :value="m.value" :is-dot="m.isDot" :hidden="m.value === 0">
@@ -62,11 +62,15 @@
                 ]
             }
         },
+		mounted(){
+			console.log(this.$store.state.Token.userconfig.userInfoVo.portrait)
+		},
         methods: {
             to(path) {
                 if (path !== null && path !== undefined) {
                     console.log('=> /main/' + path)
-                    this.$store.commit('SET_SELECT_SESSION', null)
+                    //this.$store.commit('SET_SELECT_SESSION', null)
+					this.$store.commit('CLEAN_SELECT_SESSION')
                     this.$router.push(path)
                 }
             },
