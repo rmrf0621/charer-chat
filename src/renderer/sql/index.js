@@ -6,7 +6,8 @@ var config = {
     locateFile: filename => `src/renderer/sql/${filename}`
 };
 var sql = null
-var timer = null, list = []
+var timer = null,
+    list = []
 
 SQL(config).then(db => {
     var data = fs.readFileSync('sql.db');
@@ -21,13 +22,20 @@ function clear() {
     }
 }
 
+/**
+ * 执行sql
+ */
+// export function execute(sql) {
+//     sql.
+// }
+
 export function ready(call) {
     if (sql !== null && sql !== undefined) {
         clear()
         call();
     } else {
         list.push(call)
-        timer = setInterval(function (call) {
+        timer = setInterval(function(call) {
             if (sql !== null && sql !== undefined) {
                 list.forEach(f => f())
                 list = []
@@ -51,14 +59,14 @@ export function select(sqlStr) {
         let rsp = []
         result.values.forEach(rs => {
             let val = {}
-            for(let index = 0; index < rs.length; index ++){
+            for (let index = 0; index < rs.length; index++) {
                 val[result.columns[index]] = rs[index]
             }
             rsp.push(val)
         })
-        return {isOk: true, msg: rsp}
+        return { isOk: true, msg: rsp }
     } catch (e) {
-        return {isOk: false, msg: e.message}
+        return { isOk: false, msg: e.message }
     }
 }
 
@@ -66,8 +74,8 @@ export function update(sqlStr, params) {
     clear()
     try {
         sql.run(sqlStr, params)
-        return {isOk: true, msg: 'update ok'}
+        return { isOk: true, msg: 'update ok' }
     } catch (e) {
-        return {isOk: false, msg: e.message}
+        return { isOk: false, msg: e.message }
     }
 }

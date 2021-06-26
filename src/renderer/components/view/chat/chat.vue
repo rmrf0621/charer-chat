@@ -13,6 +13,7 @@
 </template>
 
 <script>
+    import * as SQL from '@/sql/index.js'
     import group from './group'
     import ChatView from "./chat-view";
     import { friendlist } from '@/request/api.js'
@@ -84,13 +85,13 @@
            //this.init()
            onConnect(this.receivedCallback)
            this.choose()
-            
+           console.log(SQL.select('select * from friends'))
         },
         destroyed () {
             // 销毁监听
             // this.socket.onclose()
         },
-	    methods:{
+	    methods:{   
             receivedCallback(data){
                 let msg = {
                     isMe: false,
@@ -155,7 +156,7 @@
                     if (e.friendUid === from) {
                         exist = true
                         e.msgs.push(msg)
-                        this.selects(e)
+                        //this.selects(e)
                     }
                 })
                 // 当前会话列表没有

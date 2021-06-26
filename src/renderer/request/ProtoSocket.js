@@ -24,38 +24,24 @@ let manualStop = false;
 const ProtoSocket = {}
     // 建立socket连接
 const onConnect = ProtoSocket.connect = callback => {
-    if (!socket) {
-        socket = new WebSocket(IM_URI);
-        socket.cookieEnabled = false;
-        socket.binaryType = 'arraybuffer';
-        socket.onopen = ProtoSocket.innerOnConnectFinished;
-        socket.onmessage = ProtoSocket.innerOnMessageReceived;
-        socket.onclose = ProtoSocket.innerOnConnectionClosed;
-        // 接手到消息后的回调函数
-        // debugger
-        ProtoSocket.RECEVIED_CALL_BACK = callback;
-        //ProtoSocket.MESSAGE_CAGETORY = protoRoot.lookup('Request').Category;
-    } else {
-        console.log('socket已经连接建立成功!')
-    }
+    socket = new WebSocket(IM_URI);
+    socket.cookieEnabled = false;
+    socket.binaryType = 'arraybuffer';
+    socket.onopen = ProtoSocket.innerOnConnectFinished;
+    socket.onmessage = ProtoSocket.innerOnMessageReceived;
+    socket.onclose = ProtoSocket.innerOnConnectionClosed;
+    // 接手到消息后的回调函数
+    // debugger
+    ProtoSocket.RECEVIED_CALL_BACK = callback;
+    //ProtoSocket.MESSAGE_CAGETORY = protoRoot.lookup('Request').Category;
 };
 
 /**
  * 发送消息
  */
 const sender = ProtoSocket.request = (data) => {
-    //CONNECTING：值为0，表示正在连接。
-    //OPEN：值为1，表示连接成功，可以通信了。
-    //CLOSING：值为2，表示连接正在关闭。
-    //CLOSED：值为3，表示连接已经关闭，或者打开连接失败。
-    if (!socket.readyState === 1) {
-        ProtoSocket.resume()
-        if (socket.readyState === 0) {
-            setTimeout(() => {
-                console.log('等待连接........')
-            }, 1000);
-        }
-    }
+    // socket状态,
+    const state = ProtoSocket.resume()
     console.log('----------当前选中的会话---------------')
     const talkSession = store.state.Session.selectSession
     const current = store.state.Token.userconfig.userInfoVo
@@ -204,8 +190,27 @@ ProtoSocket.stop = function() {
 /* socket重连 */
 ProtoSocket.resume = function() {
     manualStop = false;
-    ProtoSocket.connect();
+    //CONNECTING：值为0，表示正在连接。
+    //OPEN：值为1，表示连接成功，可以通信了。
+    //CLOSING：值为2，表示连接正在关闭。
+    //CLOSED：值为3，表示连接已经关闭，或者打开连接失败。
+    var count = 1;
+    while (socket.readyState !== 1) {
+        if (socket.readyState === 0) {
+            console.log('........正在重连重连中........')
+                //ProtoSocket.resume()
+        } else {
+            ProtoSocket.connect();
+            console.log('........开始重连重连中........' + count++)
+        }
+        sleep(1000);
+    }
+    return true
 };
+
+function sleep(d) {
+    for (var t = Date.now(); Date.now() - t <= d;);
+}
 
 /**
  * 强制下线
